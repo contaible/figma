@@ -1,4 +1,75 @@
-<!DOCTYPE html>
+<!-- Pantalla 5: Notificaciones -->
+        <div class="screen" id="notificaciones">
+            <div class="screen-container">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>📶 📶 📶 🔋</span>
+                </div>
+                <div class="header">
+                    <h1>🔔 Notificaciones</h1>
+                    <p>Alertas y recordatorios importantes</p>
+                </div>
+                <div class="content">
+                    <!-- Filtros de notificaciones -->
+                    <div class="notification-filters">
+                        <button class="filter-btn active" onclick="filterNotifications('all')">Todas</button>
+                        <button class="filter-btn" onclick="filterNotifications('fiscal')">Fiscales</button>
+                        <button class="filter-btn" onclick="filterNotifications('banking')">Bancarias</button>
+                        <button class="filter-btn" onclick="filterNotifications('cfdi')">CFDIs</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Alertas Recientes</h3>
+                        
+                        <!-- Discrepancias bancarias -->
+                        <div class="notification-item" data-type="banking">
+                            <div class="notification-icon warning">🏦</div>
+                            <div class="notification-content">
+                                <h4>Discrepancia Bancaria</h4>
+                                <p>Depósito de $1,200 sin CFDI asociado - Requiere conciliación manual</p>
+                                <div class="notification-actions">
+                                    <button class="action-btn" onclick="goToConciliation()">Conciliar</button>
+                                    <button class="action-btn secondary">Ignorar</button>
+                                </div>
+                            </div>
+                            <div class="notification-time">15 min</div>
+                        </div>
+                        
+                        <!-- Obligaciones fiscales -->
+                        <div class="notification-item" data-type="fiscal">
+                            <div class="notification-icon info">📅</div>
+                            <div class="notification-content">
+                                <h4>Obligación Fiscal Próxima</h4>
+                                <p>Declaración mensual vence en 20 días (17 Ago 2025)</p>
+                                <div class="notification-actions">
+                                    <button class="action-btn" onclick="goToDeclarations()">Preparar</button>
+                                    <button class="action-btn secondary">Recordar más tarde</button>
+                                </div>
+                            </div>
+                            <div class="notification-time">2 hrs</div>
+                        </div>
+                        
+                        <!-- CFDIs cancelados -->
+                        <div class="notification-item" data-type="cfdi">
+                            <div class="notification-icon error">❌</div>
+                            <div class="notification-content">
+                                <h4>CFDI Cancelado</h4>
+                                <p>Factura A001-2024-001230 cancelada por el SAT - Motivo: Operación inexistente</p>
+                                <div class="notification-actions">
+                                    <button class="action-btn" onclick="reviewCFDI()">Revisar</button>
+                                    <button class="action-btn secondary">Descartar</button>
+                                </div>
+                            </div>
+                            <div class="notification-time">1 día</div>
+                        </div>
+                        
+                        <!-- EFOS -->
+                        <div class="notification-item" data-type="cfdi">
+                            <div class="notification-icon error">⚠️</div>
+                            <div class="notification-content">
+                                <h4>Alerta EFOS</h4>
+                                <p>Proveedor "Suministros Médicos SA" en lista de EFOS - Revisar facturas recibidas</p>
+                                <div class="notification-<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -562,11 +633,51 @@
                 </div>
                 <div class="header">
                     <h1>🏦 Conciliación</h1>
-                    <p>Concilia tus movimientos bancarios</p>
+                    <p>Movimientos bancarios vía Belvo</p>
                 </div>
                 <div class="content">
                     <div class="alert warning">
                         <strong>⚠️ Atención:</strong> 3 movimientos requieren conciliación manual
+                    </div>
+                    
+                    <!-- Filtros -->
+                    <div class="card">
+                        <h3>Filtros</h3>
+                        <div class="filter-row">
+                            <div class="filter-item">
+                                <label>Fecha</label>
+                                <input type="date" value="2025-07-17" />
+                            </div>
+                            <div class="filter-item">
+                                <label>Monto</label>
+                                <select>
+                                    <option>Todos</option>
+                                    <option>$0 - $1,000</option>
+                                    <option>$1,000 - $5,000</option>
+                                    <option>$5,000+</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-row">
+                            <div class="filter-item">
+                                <label>Estatus</label>
+                                <select>
+                                    <option>Todos</option>
+                                    <option>Conciliado</option>
+                                    <option>No Conciliado</option>
+                                    <option>Pendiente</option>
+                                </select>
+                            </div>
+                            <div class="filter-item">
+                                <label>Banco</label>
+                                <select>
+                                    <option>BBVA Bancomer</option>
+                                    <option>Santander</option>
+                                    <option>Banamex</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary">Aplicar Filtros</button>
                     </div>
                     
                     <div class="stats-grid">
@@ -580,35 +691,53 @@
                         </div>
                     </div>
                     
+                    <!-- Lista de movimientos bancarios -->
                     <div class="card">
-                        <h3>Último Sincronizado</h3>
-                        <p>Banco: BBVA Bancomer</p>
-                        <p>Fecha: 17 Jul 2025, 08:30</p>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 92%"></div>
-                        </div>
-                        <button class="btn" onclick="syncBank()">Sincronizar Ahora</button>
-                    </div>
-                    
-                    <div class="card">
-                        <h3>Movimientos Pendientes</h3>
+                        <h3>Movimientos Bancarios - Belvo</h3>
                         <div class="transaction-item">
                             <div class="transaction-info">
-                                <h4>Depósito - Paciente Anónimo</h4>
-                                <p>16 Jul 2025, 14:30</p>
-                                <span class="status-badge status-warning">Sin Factura</span>
+                                <h4>Depósito - SPEI</h4>
+                                <p>16 Jul 2025, 14:30 • BBVA</p>
+                                <span class="status-badge status-warning">No Conciliado</span>
                             </div>
-                            <div class="transaction-amount">$1,200.00</div>
+                            <div class="transaction-actions">
+                                <div class="transaction-amount">$1,200.00</div>
+                                <button class="btn-small" onclick="showConciliationModal(1200)">Conciliar</button>
+                            </div>
                         </div>
                         <div class="transaction-item">
                             <div class="transaction-info">
                                 <h4>Transferencia SPEI</h4>
-                                <p>15 Jul 2025, 10:15</p>
-                                <span class="status-badge status-warning">Sin Conciliar</span>
+                                <p>15 Jul 2025, 10:15 • BBVA</p>
+                                <span class="status-badge status-warning">No Conciliado</span>
                             </div>
-                            <div class="transaction-amount">$2,250.00</div>
+                            <div class="transaction-actions">
+                                <div class="transaction-amount">$2,250.00</div>
+                                <button class="btn-small" onclick="showConciliationModal(2250)">Conciliar</button>
+                            </div>
                         </div>
-                        <button class="btn btn-secondary">Conciliar Manualmente</button>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Consulta Médica</h4>
+                                <p>14 Jul 2025, 09:45 • BBVA</p>
+                                <span class="status-badge status-success">Conciliado</span>
+                            </div>
+                            <div class="transaction-actions">
+                                <div class="transaction-amount">$850.00</div>
+                                <span class="cfdi-ref">CFDI: A001-001234</span>
+                            </div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Depósito Efectivo</h4>
+                                <p>13 Jul 2025, 16:20 • BBVA</p>
+                                <span class="status-badge status-warning">No Conciliado</span>
+                            </div>
+                            <div class="transaction-actions">
+                                <div class="transaction-amount">$3,500.00</div>
+                                <button class="btn-small" onclick="showConciliationModal(3500)">Conciliar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -650,26 +779,81 @@
                         </div>
                     </div>
                     
+                    <!-- Formulario de declaración con campos prellenados -->
                     <div class="card">
-                        <h3>Generar Declaración</h3>
-                        <div class="input-group">
-                            <label>Período</label>
-                            <select>
-                                <option>Julio 2025</option>
-                                <option>Junio 2025</option>
-                                <option>Mayo 2025</option>
-                            </select>
+                        <h3>Formulario Declaración Mensual</h3>
+                        <div class="form-section">
+                            <h4>Datos Generales (Prellenados)</h4>
+                            <div class="input-group">
+                                <label>Período</label>
+                                <select>
+                                    <option>Julio 2025</option>
+                                    <option>Junio 2025</option>
+                                    <option>Mayo 2025</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Tipo de Declaración</label>
+                                <select>
+                                    <option>Mensual</option>
+                                    <option>Anual</option>
+                                    <option>Informativa</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <label>Tipo de Declaración</label>
-                            <select>
-                                <option>Mensual</option>
-                                <option>Anual</option>
-                                <option>Informativa</option>
-                            </select>
+                        
+                        <div class="form-section">
+                            <h4>Ingresos (Desde CFDIs)</h4>
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label>Ingresos Acumulados</label>
+                                    <input type="number" value="125,450.00" readonly />
+                                </div>
+                                <div class="input-group">
+                                    <label>CFDIs Emitidos</label>
+                                    <input type="number" value="48" readonly />
+                                </div>
+                            </div>
                         </div>
-                        <button class="btn" onclick="generateDeclaration()">
-                            🔐 Generar y Firmar con e.firma
+                        
+                        <div class="form-section">
+                            <h4>Deducciones</h4>
+                            <div class="input-row">
+                                <div class="input-group">
+                                    <label>Gastos Deducibles</label>
+                                    <input type="number" value="15,230.00" />
+                                </div>
+                                <div class="input-group">
+                                    <label>ISR Retenido</label>
+                                    <input type="number" value="8,750.00" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4>Cálculos</h4>
+                            <div class="calculation-summary">
+                                <div class="calc-item">
+                                    <span>Base Gravable:</span>
+                                    <span>$110,220.00</span>
+                                </div>
+                                <div class="calc-item">
+                                    <span>ISR a Pagar:</span>
+                                    <span>$12,450.00</span>
+                                </div>
+                                <div class="calc-item">
+                                    <span>IVA a Pagar:</span>
+                                    <span>$18,672.00</span>
+                                </div>
+                                <div class="calc-item total">
+                                    <span>Total a Pagar:</span>
+                                    <span>$31,122.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn" onclick="signWithBiometrics()">
+                            🔐 Firmar con e.firma + Biometría
                         </button>
                     </div>
                     
@@ -679,7 +863,23 @@
                             <div class="transaction-info">
                                 <h4>Declaración Mensual - Junio</h4>
                                 <p>Presentada: 15 Jul 2025</p>
-                                <span class="status-badge status-success">Enviada</span>
+                                <span class="status-badge status-success">Aceptada</span>
+                            </div>
+                            <div class="transaction-amount">PDF</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Declaración Mensual - Mayo</h4>
+                                <p>Presentada: 16 Jun 2025</p>
+                                <span class="status-badge status-success">Aceptada</span>
+                            </div>
+                            <div class="transaction-amount">PDF</div>
+                        </div>
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <h4>Declaración Anual - 2024</h4>
+                                <p>Presentada: 25 Abr 2025</p>
+                                <span class="status-badge status-warning">Enviada</span>
                             </div>
                             <div class="transaction-amount">PDF</div>
                         </div>
@@ -697,13 +897,21 @@
                 </div>
                 <div class="header">
                     <h1>🤖 Asistente Fiscal</h1>
-                    <p>Resuelve tus dudas al instante</p>
+                    <p>Powered by Rasa • Soporte inteligente</p>
                 </div>
                 <div class="content">
                     <div class="chat-container" id="chatContainer">
                         <div class="chat-message">
                             <div class="chat-bubble bot">
-                                ¡Hola! 👋 Soy tu asistente fiscal. ¿En qué puedo ayudarte hoy?
+                                ¡Hola! 👋 Soy tu asistente fiscal inteligente. Puedo ayudarte con:
+                                <br><br>
+                                • Dudas sobre facturación CFDI 4.0<br>
+                                • Conciliación bancaria<br>
+                                • Declaraciones fiscales<br>
+                                • Normativa para médicos<br>
+                                • Uso de la aplicación
+                                <br><br>
+                                ¿En qué puedo ayudarte hoy?
                             </div>
                         </div>
                         <div class="chat-message user">
@@ -713,34 +921,62 @@
                         </div>
                         <div class="chat-message">
                             <div class="chat-bubble bot">
-                                📅 La fecha límite para presentar tu declaración mensual de julio es el <strong>17 de agosto de 2025</strong>. 
+                                📅 Para médicos personas físicas, la fecha límite para presentar tu declaración mensual de julio es el <strong>17 de agosto de 2025</strong>. 
                                 <br><br>
-                                Te quedan <strong>20 días</strong> para presentarla. ¿Te gustaría que te ayude a generarla?
+                                Te quedan <strong>20 días</strong> para presentarla. Según tu historial, ya tienes:
+                                <br><br>
+                                • 48 CFDIs emitidos<br>
+                                • $125,450 en ingresos acumulados<br>
+                                • ISR retenido: $8,750<br>
+                                <br>
+                                ¿Te gustaría que te ayude a generar la declaración?
                             </div>
                         </div>
                         <div class="chat-message user">
                             <div class="chat-bubble user">
-                                ¿Qué documentos necesito para deducir gastos médicos?
+                                ¿Cómo funciona la conciliación bancaria con Belvo?
                             </div>
                         </div>
                         <div class="chat-message">
                             <div class="chat-bubble bot">
-                                📋 Para deducir gastos médicos necesitas:
+                                🏦 La conciliación con Belvo funciona así:
                                 <br><br>
-                                • Facturas con CFDI 4.0<br>
-                                • RFC del paciente<br>
-                                • Comprobante de pago<br>
-                                • Receta médica (medicamentos)<br>
-                                • Certificado médico (tratamientos)
+                                1. <strong>Sincronización automática</strong> con tu banco (BBVA, Santander, etc.)<br>
+                                2. <strong>Matching inteligente</strong> entre movimientos y CFDIs<br>
+                                3. <strong>Alertas</strong> para movimientos no conciliados<br>
+                                4. <strong>Conciliación manual</strong> para casos especiales
                                 <br><br>
-                                ¿Tienes alguna duda específica sobre algún documento?
+                                Actualmente tienes 3 movimientos pendientes por $3,450. ¿Necesitas ayuda para conciliarlos?
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Botones de acción rápida -->
+                    <div class="quick-actions-chat">
+                        <button class="quick-btn" onclick="sendQuickMessage('¿Cómo genero una factura CFDI 4.0?')">
+                            💳 Facturación CFDI
+                        </button>
+                        <button class="quick-btn" onclick="sendQuickMessage('¿Qué gastos puedo deducir como médico?')">
+                            📊 Deducciones Médicas
+                        </button>
+                        <button class="quick-btn" onclick="sendQuickMessage('¿Cuándo debo presentar mi declaración anual?')">
+                            📋 Declaración Anual
+                        </button>
+                    </div>
+                    
                     <div class="chat-input">
-                        <input type="text" id="chatInput" placeholder="Escribe tu pregunta..." />
+                        <input type="text" id="chatInput" placeholder="Escribe tu pregunta sobre normativa fiscal..." />
                         <button onclick="sendMessage()">Enviar</button>
+                    </div>
+                    
+                    <!-- Botón de soporte humano -->
+                    <div class="support-section">
+                        <p style="text-align: center; margin: 15px 0; color: #666; font-size: 14px;">
+                            ¿Necesitas ayuda personalizada?
+                        </p>
+                        <button class="btn btn-secondary" onclick="contactHumanSupport()">
+                            👨‍💼 Contactar Soporte Humano (Atsushi)
+                        </button>
                     </div>
                 </div>
             </div>
